@@ -1,0 +1,206 @@
+{
+  "_description": "MCP (Model Context Protocol) 服务器配置文件",
+  "_docs": {
+    "说明": "此配置文件用于管理MCP服务器连接。每个服务器配置包含以下字段：",
+    "字段说明": {
+      "command": "启动MCP服务器的命令（如 npx, python, uvx 等）",
+      "args": "传递给命令的参数列表",
+      "env": "环境变量字典，用于传递API密钥等敏感信息",
+      "enabled": "是否启用此服务器（true/false）",
+      "description": "服务器描述信息",
+      "timeout": "连接超时时间（秒）"
+    },
+    "启用服务器": "将对应服务器的 enabled 字段设置为 true",
+    "获取Token": {
+      "GitHub": "访问 https://github.com/settings/tokens 创建 Personal Access Token，需要 repo 权限",
+      "PostgreSQL/MySQL": "使用数据库用户名和密码，确保数据库允许连接",
+      "Slack": "访问 https://api.slack.com/apps 创建应用并获取 Bot Token",
+      "Google": "访问 https://console.cloud.google.com/apis/credentials 创建 OAuth 2.0 凭据",
+      "Brave Search": "访问 https://brave.com/search/api/ 获取 API Key",
+      "Puppeteer": "无需Token，但需要安装 Chromium"
+    },
+    "环境变量配置": "建议将敏感信息（如API密钥）配置在 .env 文件中，然后在 env 字段中引用"
+  },
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-filesystem",
+        "."
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "文件系统MCP服务器 - 提供文件读写、目录操作等功能。参数中的 '.' 表示允许访问的根目录，可修改为具体路径如 '/home/user/projects'",
+      "timeout": 30
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "your_github_personal_access_token_here"
+      },
+      "enabled": false,
+      "description": "GitHub MCP服务器 - 提供仓库管理、Issue处理、PR操作等功能。需要在 env 中配置 GITHUB_TOKEN。获取方式：GitHub Settings -> Developer settings -> Personal access tokens -> Generate new token (classic)，需要勾选 repo 权限",
+      "timeout": 60
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-postgres"
+      ],
+      "env": {
+        "POSTGRES_CONNECTION_STRING": "postgresql://username:password@localhost:5432/database_name"
+      },
+      "enabled": false,
+      "description": "PostgreSQL MCP服务器 - 提供数据库查询、表结构查看等功能。需要在 env 中配置数据库连接字符串，格式：postgresql://用户名:密码@主机:端口/数据库名",
+      "timeout": 30
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-sqlite",
+        "/path/to/your/database.db"
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "SQLite MCP服务器 - 提供SQLite数据库操作功能。将 args 中的路径替换为你的 .db 文件路径",
+      "timeout": 30
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "your_brave_api_key_here"
+      },
+      "enabled": false,
+      "description": "Brave Search MCP服务器 - 提供网络搜索功能。需要在 env 中配置 BRAVE_API_KEY。获取方式：访问 https://brave.com/search/api/ 注册并创建 API Key",
+      "timeout": 30
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-puppeteer"
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "Puppeteer MCP服务器 - 提供浏览器自动化、网页截图、内容抓取等功能。首次运行会自动下载 Chromium，可能需要较长时间",
+      "timeout": 60
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-slack"
+      ],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-bot-token-here",
+        "SLACK_TEAM_ID": "TXXXXXXXX"
+      },
+      "enabled": false,
+      "description": "Slack MCP服务器 - 提供Slack消息发送、频道管理等功能。需要在 env 中配置 SLACK_BOT_TOKEN 和 SLACK_TEAM_ID。获取方式：访问 https://api.slack.com/apps 创建应用，安装到工作区后获取 Bot User OAuth Token",
+      "timeout": 30
+    },
+    "google-drive": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-gdrive"
+      ],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "your_client_id.apps.googleusercontent.com",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "your_client_secret"
+      },
+      "enabled": false,
+      "description": "Google Drive MCP服务器 - 提供Google Drive文件操作功能。需要在 env 中配置 Google OAuth 凭据。获取方式：访问 Google Cloud Console -> APIs & Services -> Credentials -> Create OAuth 2.0 Client IDs",
+      "timeout": 30
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-memory"
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "Memory MCP服务器 - 提供持久化记忆存储功能，允许AI在会话之间记住信息。数据存储在本地文件中",
+      "timeout": 30
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic-ai/mcp-server-fetch"
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "Fetch MCP服务器 - 提供HTTP请求功能，可以获取网页内容、调用API等。支持GET、POST等HTTP方法",
+      "timeout": 30
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "."
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "Git MCP服务器 - 提供Git操作功能，如提交、分支管理、日志查看等。参数中的 '.' 表示Git仓库路径，可修改为具体路径。需要安装 uvx (pip install uv)",
+      "timeout": 30
+    },
+    "python-repl": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-python"
+      ],
+      "env": {},
+      "enabled": false,
+      "description": "Python REPL MCP服务器 - 提供Python代码执行功能。可以运行Python代码并获取结果。注意：此服务器有安全风险，请谨慎启用",
+      "timeout": 60
+    }
+  },
+  "_examples": {
+    "自定义服务器示例": {
+      "my-custom-server": {
+        "command": "python",
+        "args": ["-m", "my_mcp_server"],
+        "env": {
+          "API_KEY": "your_api_key",
+          "DEBUG": "false"
+        },
+        "enabled": true,
+        "description": "自定义MCP服务器示例",
+        "timeout": 30
+      }
+    },
+    "使用uvx运行Python MCP服务器": {
+      "command": "uvx",
+      "args": ["package-name"],
+      "说明": "uvx 是 uv 工具的一部分，可以直接运行Python包而无需预先安装"
+    },
+    "使用npx运行Node.js MCP服务器": {
+      "command": "npx",
+      "args": ["-y", "@scope/package-name"],
+      "说明": "-y 参数会自动确认安装，避免交互式提示"
+    }
+  },
+  "_security_notes": {
+    "重要安全提示": [
+      "1. 不要将包含真实API密钥的配置文件提交到版本控制系统",
+      "2. 建议使用环境变量或.env文件存储敏感信息",
+      "3. 只启用你信任且需要的MCP服务器",
+      "4. Python REPL等执行代码的服务器存在安全风险，请谨慎使用",
+      "5. 定期检查和更新MCP服务器包以获取安全修复"
+    ]
+  }
+}
